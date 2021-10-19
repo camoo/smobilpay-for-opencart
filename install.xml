@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<name>Add new request status button to order info page</name>
+	<code>Add new request status button to order info page</code>
+	<version>1</version>
+	<author>Izipresta</author>
+	<link>izipresta.com</link>
+	<file path="admin/language/en-gb/sale/order.php">
+		<operation error="log">
+			<search><![CDATA[$_['entry_date_modified']        = 'Date Modified';]]></search>
+			<add position="after">
+				<![CDATA[
+					$_['entry_load_status']        = 'Refresh order status';
+					$_['text_enkap_transaction_id']        = 'E-nkap Transaction ID';
+					$_['text_enkap_merchant_reference']        = 'E-nkap Merchant Reference';
+					$_['text_enkap_order_status']        = 'E-nkap Payment Status';
+				]]>
+			</add>
+		</operation>
+	</file>
+	<file path="admin/controller/sale/order.php">
+		<operation error="log">
+			<search><![CDATA[$data['invoice'] = $this->url->link('sale/order/invoice', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . (int)$this->request->get['order_id'], true);]]></search>
+			<add position="after"><![CDATA[$data['status'] = $this->url->link('extension/payment/enkap/status', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . (int)$this->request->get['order_id'], true);]]></add>
+		</operation>
+		<operation error="log">
+			<search><![CDATA[public function info() {]]></search>
+			<add position="after">
+				<![CDATA[
+					$this->load->model('extension/payment/enkap');
+					$value = $this->model_extension_payment_enkap->getOrderTransaction($this->request->get['order_id']);
+					if($value && $value['order_transaction_id'] && $value['merchantReference']){
+						$data['enkap_transaction_id'] = $value['order_transaction_id'];
+						$data['enkap_merchant_reference'] = $value['merchantReference'];
+					}
+				]]>
+			</add>
+		</operation>
+	</file>
+	<file path="admin/view/template/sale/order_info.twig">
+		<operation error="log">
+			<search><![CDATA[<a href="{{ invoice }}" target="_blank" data-toggle="tooltip" title="{{ button_invoice_print }}" class="btn btn-info"><i class="fa fa-print"></i></a> <a href="{{ shipping }}" target="_blank" data-toggle="tooltip" title="{{ button_shipping_print }}" class="btn btn-info"><i class="fa fa-truck"></i></a> <a href="{{ edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>]]></search>
+			<add position="replace"><![CDATA[<a href="{{ status }}" data-toggle="tooltip" title="{{ entry_load_status }}" class="btn btn-info"><i class="fa fa-spinner"></i></a> <a href="{{ invoice }}" target="_blank" data-toggle="tooltip" title="{{ button_invoice_print }}" class="btn btn-info"><i class="fa fa-print"></i></a> <a href="{{ shipping }}" target="_blank" data-toggle="tooltip" title="{{ button_shipping_print }}" class="btn btn-info"><i class="fa fa-truck"></i></a> <a href="{{ edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>]]></add>
+		</operation>
+		<operation error="log">
+			<search><![CDATA[<td style="width: 50%;" class="text-left">{{ text_payment_address }}</td>]]></search>
+			<add position="replace">
+				<![CDATA[
+					{% if enkap_transaction_id and enkap_merchant_reference %}
+						<td style="width: 20%;" class="text-left">{{ text_payment_address }}</td>
+						<td style="width: 20%;" class="text-left">{{ text_enkap_transaction_id }}</td>
+						<td style="width: 20%;" class="text-left">{{ text_enkap_merchant_reference }}</td>
+						<td style="width: 20%;" class="text-left">{{ text_enkap_order_status }}</td>
+					{% else %}
+						<td style="width: 50%;" class="text-left">{{ text_payment_address }}</td>
+					{% endif %}
+				]]>
+			</add>
+		</operation>
+		<operation error="log">
+			<search><![CDATA[<td style="width: 50%;" class="text-left">{{ text_shipping_address }}</td>]]></search>
+			<add position="replace">
+				<![CDATA[
+					{% if enkap_transaction_id and enkap_merchant_reference %}
+						<td style="width: 20%;" class="text-left">{{ text_shipping_address }}</td>
+					{% else %}	
+						<td style="width: 50%;" class="text-left">{{ text_shipping_address }}</td>
+					{% endif %}
+				]]>
+			</add>
+		</operation>
+		<operation error="log">
+			<search><![CDATA[<td class="text-left">{{ payment_address }}</td>]]></search>
+			<add position="replace">
+				<![CDATA[
+					{% if enkap_transaction_id and enkap_merchant_reference %}
+						<td class="text-left">{{ payment_address }}</td>
+						<td class="text-left">{{ enkap_transaction_id }}</td>
+						<td class="text-left">{{ enkap_merchant_reference }}</td>
+						{% for order_statuses in order_statuses %}
+							{% if order_statuses.order_status_id == order_status_id %}
+								 <td class="text-left">{{ order_statuses.name }}</td>
+							{% endif %}
+						{% endfor %}
+					{% else %}
+						<td class="text-left">{{ payment_address }}</td>
+					{% endif %}
+				]]>
+			</add>
+		</operation>
+	</file>
+ </modification>
