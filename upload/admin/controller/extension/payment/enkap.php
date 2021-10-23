@@ -12,6 +12,7 @@ class ControllerExtensionPaymentEnkap extends Controller
         }
         return 'PHP/' . PHP_VERSION_ID;
     }
+
     public function sendCurl($url, $data, $authorization = null, $is_post = true, $isPut = false)
     {
         $ch = curl_init($url);
@@ -22,7 +23,7 @@ class ControllerExtensionPaymentEnkap extends Controller
         if (null !== $authorization) {
             $header[] = "Authorization: Bearer " . $authorization;
         }
-        curl_setopt( $ch, CURLOPT_USERAGENT, "SmobilPay-OC/CamooClient/". self::getPhpVersion());
+        curl_setopt($ch, CURLOPT_USERAGENT, "SmobilPay-OC/CamooClient/" . self::getPhpVersion());
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         if ($is_post) {
             if ($isPut === true) {
@@ -48,7 +49,8 @@ class ControllerExtensionPaymentEnkap extends Controller
             $response = json_encode($response);
         } else {
             $info = curl_getinfo($ch);
-            if ($info['http_code'] != 200) {
+            $httpCode = $info['http_code'];
+            if (!in_array($httpCode, [200, 201])) {
                 $response = new stdClass();
                 if ($info['http_code'] == 401 || $info['http_code'] == 404 || $info['http_code'] == 403) {
                     $response->Errors = "Please check the API Key and Password";
@@ -77,7 +79,7 @@ class ControllerExtensionPaymentEnkap extends Controller
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYHOST => false,
             CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_USERAGENT => "SmobilPay-OC/CamooClient/". self::getPhpVersion(),
+            CURLOPT_USERAGENT => "SmobilPay-OC/CamooClient/" . self::getPhpVersion(),
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
@@ -289,18 +291,14 @@ class ControllerExtensionPaymentEnkap extends Controller
 
     public function install()
     {
-        $this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "enkap_transaction` (
-			`id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-			`order_id` int(11) NOT NULL,
-			`order_transaction_id` varchar(255) NOT NULL,
-			`merchantReference` varchar(255) NOT NULL,
-			`status`                varchar(50)   DEFAULT NULL,
-			`status_date`           datetime      NOT NULL DEFAULT '2021-05-20 00:00:00',
-            `created_at`            timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            `updated_at`            timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            `remote_ip`             varbinary(64) NOT NULL DEFAULT '0.0.0.0',
-			PRIMARY KEY (`id`)
-		  ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+        $this->load->model('extension/payment/enkap');
+        $this->model_extension_payment_enkap->install();
+    }
+
+    public function uninstall()
+    {
+        $this->load->model('extension/payment/enkap');
+        $this->model_extension_payment_enkap->uninstall();
     }
 
     public function status()

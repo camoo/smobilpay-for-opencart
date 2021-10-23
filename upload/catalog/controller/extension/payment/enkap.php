@@ -1,7 +1,5 @@
 <?php
 
-use ScssPhp\ScssPhp\Cache;
-
 class ControllerExtensionPaymentEnkap extends Controller
 {
     public function index()
@@ -54,7 +52,7 @@ class ControllerExtensionPaymentEnkap extends Controller
                 $orderUrl = $apiUrls['order_url'];
                 $jsonStatus = $this->sendCurl($orderUrl, $orderData, $token);
                 $orderObj = json_decode($jsonStatus);
-                // Save references into your Database 
+                // Save references into your Database
                 $this->load->model('extension/payment/enkap');
                 $this->model_extension_payment_enkap->addOrderTransactionId(
                     $this->session->data['order_id'],
@@ -206,7 +204,8 @@ class ControllerExtensionPaymentEnkap extends Controller
             $response = json_encode($response);
         } else {
             $info = curl_getinfo($ch);
-            if ($info['http_code'] != 200) {
+            $httpCode = $info['http_code'];
+            if (!in_array($httpCode, [200, 201])) {
                 $response = new stdClass();
                 if ($info['http_code'] == 401 || $info['http_code'] == 404 || $info['http_code'] == 403) {
                     $response->Errors = "Please check the API Key and Password";
@@ -224,35 +223,26 @@ class ControllerExtensionPaymentEnkap extends Controller
 
     protected function getCurrencyRate()
     {
-        $cache = $this->getCache();
+        $cache = new Cache('File', 86400);
 
         $siteCurrency = $this->session->data['currency'];
         if ($siteCurrency === 'XAF') {
             return 1;
         }
-        $currencyCacheKey = 'currency_' . $siteCurrency;
-        $url = 'https://open.er-api.com/v6/latest/' . $siteCurrency;
-        $currencyData = [];
-        if ($cache !== null) {
-            $cache::$gcLifetime = 86400;
-            $currencies = $cache->getCache('compile', $currencyCacheKey);
-
-            if (empty($currencies)) {
-                $currencies = $this->sendCurl($url, [], null, false);
-                $currencyData = json_decode($currencies, true);
-
-               /* $expiresIn = $currencyData['time_next_update_unix'] - time();
-                if (empty($expiresIn) || $expiresIn < 0) {
-                    $expiresIn = 86400;
-                }*/
-                #$cache::$gcLifetime = $expiresIn;
-                $cache->setCache('compile', $currencyCacheKey, $currencies);
-            }
-        }else{
-            $currencies = $this->sendCurl($url, [], null, false);
-            $currencyData = json_decode($currencies, true);
+        if (empty($siteCurrency)) {
+            $siteCurrency = 'EUR';
         }
 
+        $currencyCacheKey = 'currency_' . $siteCurrency;
+        $url = 'https://open.er-api.com/v6/latest/' . $siteCurrency;
+        $currencies = $cache->get($currencyCacheKey);
+
+        if (empty($currencies)) {
+            $currencies = $this->sendCurl($url, [], null, false);
+            $cache->set($currencyCacheKey, $currencies);
+        }
+
+        $currencyData = json_decode($currencies, true);
         $rates = $currencyData['rates'];
         if (!array_key_exists('XAF', $rates)) {
             return null;
@@ -306,11 +296,4 @@ class ControllerExtensionPaymentEnkap extends Controller
         ];
     }
 
-    private function getCache()
-    {
-        if (!class_exists(Cache::class)) {
-            return null;
-        }
-        return new Cache(['cacheDir' => DIR_CACHE, 'enkap_']);
-    }
 }
