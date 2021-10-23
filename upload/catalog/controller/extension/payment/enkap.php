@@ -50,7 +50,7 @@ class ControllerExtensionPaymentEnkap extends Controller
                 $token = $this->getToken($public, $private, $sandbox);
                 $apiUrls = $this->getApiUrls($sandbox);
                 $orderUrl = $apiUrls['order_url'];
-                $jsonStatus = $this->sendCurl($orderUrl, $orderData, $token, true);
+                $jsonStatus = $this->sendCurl($orderUrl, $orderData, $token);
                 $orderObj = json_decode($jsonStatus);
                 // Save references into your Database 
                 $this->load->model('extension/payment/enkap');
@@ -158,14 +158,33 @@ class ControllerExtensionPaymentEnkap extends Controller
         $this->model_checkout_order->addOrderHistory($value['order_id'], $order_status_id);
     }
 
-    public function sendCurl($url, $data, $is_post = true)
+    protected static function getPhpVersion()
+    {
+        if (!defined('PHP_VERSION_ID')) {
+            $version = explode('.', PHP_VERSION);
+            define('PHP_VERSION_ID', $version[0] * 10000 + $version[1] * 100 + $version[2]);
+        }
+        return 'PHP/' . PHP_VERSION_ID;
+    }
+    public function sendCurl($url, $data, $authorization = null, $is_post = true, $isPut = false)
     {
         $ch = curl_init($url);
 
+        $header = [
+            "Content-Type: application/json",
+            "User-Agent: SmobilPay-OC/CamooClient/". self::getPhpVersion(),
+        ];
+        if (null !== $authorization) {
+            $header[] = "Authorization: Bearer " . $authorization;
+        }
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         if ($is_post) {
-            curl_setopt($ch, CURLOPT_POST, 1);
+            if ($isPut === true) {
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+            } else {
+                curl_setopt($ch, CURLOPT_POST, 1);
+            }
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         } else {
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
@@ -216,7 +235,7 @@ class ControllerExtensionPaymentEnkap extends Controller
             $currencies = $cache->getCache('compile', $currencyCacheKey);
 
             if (empty($currencies)) {
-                $currencies = $this->sendCurl($url, [], false);
+                $currencies = $this->sendCurl($url, [], null, false);
                 $currencyData = json_decode($currencies, true);
 
                /* $expiresIn = $currencyData['time_next_update_unix'] - time();
@@ -227,7 +246,7 @@ class ControllerExtensionPaymentEnkap extends Controller
                 $cache->setCache('compile', $currencyCacheKey, $currencies);
             }
         }else{
-            $currencies = $this->sendCurl($url, [], false);
+            $currencies = $this->sendCurl($url, [], null, false);
             $currencyData = json_decode($currencies, true);
         }
 

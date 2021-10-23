@@ -4,13 +4,21 @@ class ControllerExtensionPaymentEnkap extends Controller
 {
     private $error = [];
 
-
+    protected static function getPhpVersion()
+    {
+        if (!defined('PHP_VERSION_ID')) {
+            $version = explode('.', PHP_VERSION);
+            define('PHP_VERSION_ID', $version[0] * 10000 + $version[1] * 100 + $version[2]);
+        }
+        return 'PHP/' . PHP_VERSION_ID;
+    }
     public function sendCurl($url, $data, $authorization = null, $is_post = true, $isPut = false)
     {
         $ch = curl_init($url);
 
         $header = [
             "Content-Type: application/json",
+            "User-Agent: SmobilPay-OC/CamooClient/". self::getPhpVersion(),
         ];
         if (null !== $authorization) {
             $header[] = "Authorization: Bearer " . $authorization;
