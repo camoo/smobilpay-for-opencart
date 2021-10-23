@@ -1,5 +1,7 @@
 <?php
 
+use ScssPhp\ScssPhp\Cache;
+
 class ControllerExtensionPaymentEnkap extends Controller
 {
     public function index()
@@ -34,14 +36,14 @@ class ControllerExtensionPaymentEnkap extends Controller
                 }
             }
 
-            $merchantReference = uniqid('secure', true);
+            $merchantReference = uniqid('oc-', true);
             $currencyRate = $this->getCurrencyRate();
             $orderData = [
                 'merchantReference' => $merchantReference,
                 'email' => $order_info['email'],
                 'customerName' => $order_info['payment_lastname'] . ' ' . $order_info['payment_firstname'],
                 'totalAmount' => (float)ceil($order_info['total'] * $currencyRate),
-                'description' => 'SmobilPay for e-commerce',
+                'description' => 'SmobilPay for e-commerce Opencart',
                 'currency' => 'XAF',
                 'items' => $items
             ];
@@ -166,19 +168,20 @@ class ControllerExtensionPaymentEnkap extends Controller
         }
         return 'PHP/' . PHP_VERSION_ID;
     }
+
     public function sendCurl($url, $data, $authorization = null, $is_post = true, $isPut = false)
     {
         $ch = curl_init($url);
 
         $header = [
             "Content-Type: application/json",
-            "User-Agent: SmobilPay-OC/CamooClient/". self::getPhpVersion(),
         ];
         if (null !== $authorization) {
             $header[] = "Authorization: Bearer " . $authorization;
         }
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt( $ch, CURLOPT_USERAGENT, "SmobilPay-OC/CamooClient/". self::getPhpVersion());
         if ($is_post) {
             if ($isPut === true) {
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
@@ -271,6 +274,7 @@ class ControllerExtensionPaymentEnkap extends Controller
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYHOST => false,
             CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_USERAGENT => "SmobilPay-OC/CamooClient/". self::getPhpVersion(),
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
@@ -304,9 +308,9 @@ class ControllerExtensionPaymentEnkap extends Controller
 
     private function getCache()
     {
-        if (!class_exists(\ScssPhp\ScssPhp\Cache::class)) {
+        if (!class_exists(Cache::class)) {
             return null;
         }
-        return new \ScssPhp\ScssPhp\Cache(['cacheDir' => DIR_CACHE, 'enkap_']);
+        return new Cache(['cacheDir' => DIR_CACHE, 'enkap_']);
     }
 }

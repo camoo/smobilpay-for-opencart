@@ -55,7 +55,8 @@ class ModelExtensionPaymentEnkap extends Model
 
     public function updateOrderStatus($capture_status, $order_id)
     {
-        $this->db->query("UPDATE `" . DB_PREFIX . "enkap_transaction` SET `status_date` = now(), `status` = '" . $this->db->escape($capture_status) . "' WHERE `order_id` = '" . (int)$order_id . "'");
+        $clientIp = $this->request->server['REMOTE_ADDR'];
+        $this->db->query("UPDATE `" . DB_PREFIX . "enkap_transaction` SET `status_date` = NOW(), `status` = '" . $this->db->escape($capture_status) . "', `remote_ip` = '".$this->db->escape($clientIp)."' WHERE `order_id` = '" . (int)$order_id . "'");
     }
 
 

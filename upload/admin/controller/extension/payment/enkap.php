@@ -18,12 +18,11 @@ class ControllerExtensionPaymentEnkap extends Controller
 
         $header = [
             "Content-Type: application/json",
-            "User-Agent: SmobilPay-OC/CamooClient/". self::getPhpVersion(),
         ];
         if (null !== $authorization) {
             $header[] = "Authorization: Bearer " . $authorization;
         }
-
+        curl_setopt( $ch, CURLOPT_USERAGENT, "SmobilPay-OC/CamooClient/". self::getPhpVersion());
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         if ($is_post) {
             if ($isPut === true) {
@@ -78,6 +77,7 @@ class ControllerExtensionPaymentEnkap extends Controller
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYHOST => false,
             CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_USERAGENT => "SmobilPay-OC/CamooClient/". self::getPhpVersion(),
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,

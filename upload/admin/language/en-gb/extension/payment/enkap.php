@@ -7,7 +7,7 @@ $_['text_home']				         = 'Home';
 $_['text_extension']				 = 'Extensions';
 $_['text_success']					 = 'Success: You have modified SmobilPay account details!';
 $_['text_edit']                      = 'Edit SmobilPay Payment';
-$_['text_enkap']    				 = '<a target="_blank" href="https://enkap.cm/"><img src="view/image/payment/enkap.png" alt="SmobilPay Website Payment Pro" title="SmobilPay Website Payment Pro iFrame" style="border: 1px solid #EEEEEE;" /></a>';
+$_['text_enkap']    				 = '<a target="_blank" href="https://enkap.cm/"><img src="view/image/payment/enkap.png" alt="SmobilPay Website Payment" title="SmobilPay Website Payment" style="width:100px;border: 1px solid #EEEEEE;" /></a>';
 
 // Entry
 $_['entry_public']					 = 'Consumer Key';
@@ -34,3 +34,4 @@ $_['help_test']						 = 'Use the live or testing (sandbox) gateway server to pro
 $_['error_permission']				 = 'Warning: You do not have permission to modify payment SmobilPay!';
 $_['error_public']					 = 'Consumer key required!';
 $_['error_private']					 = 'Secret key required!';
+$_['text_error']					 = 'Error: Action could not be completed successfully!';
