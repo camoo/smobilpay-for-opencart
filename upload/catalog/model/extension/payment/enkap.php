@@ -49,7 +49,7 @@ class ModelExtensionPaymentEnkap extends Model
 
     public function getOrderTransactionId($merchantReference)
     {
-        return $this->db->query("SELECT `order_transaction_id`, `order_id` FROM `" . DB_PREFIX . "enkap_transaction` WHERE `merchantReference` = '" . $merchantReference . "'")->row;
+        return $this->db->query("SELECT `order_transaction_id`, `order_id` FROM `" . DB_PREFIX . "enkap_transaction` WHERE `merchantReference` = '" . $this->db->escape($merchantReference) . "'")->row;
     }
 
 
