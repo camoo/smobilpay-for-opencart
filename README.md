@@ -27,4 +27,5 @@ The usage of this plugin is completely free. You have to just have an SmobilPay 
 5. In your Opencart Dashboard go to \"Extensions\" -> \"Modifications\" and press the refresh button (upper right button).
 6. In your Opencart Dashboard go to \"Extensions\" -> \"Extensions\" in the filter option select Payments
 7. Look for \"SmobilPay for e-commerce\" and Click on \"Edit\" button to add your API credentials.
+8. Click on the tab \"Order Status\" and map SmobilPay status to Opencart system
 
