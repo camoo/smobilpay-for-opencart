@@ -1,13 +1,13 @@
 <?php
 // Heading
-$_['heading_title']					 = 'E-nkap Payment';
+$_['heading_title']					 = 'SmobilPay for e-commerce';
 
 // Text
 $_['text_home']				         = 'Home';
 $_['text_extension']				 = 'Extensions';
-$_['text_success']					 = 'Success: You have modified E-nkap account details!';
-$_['text_edit']                      = 'Edit E-nkap Payment';
-$_['text_enkap']    				 = '<a target="_BLANK" href="https://enkap.cm/?lang=en"><img src="view/image/payment/enkap.png" alt="E-nkap Website Payment Pro" title="E-nkap Website Payment Pro iFrame" style="border: 1px solid #EEEEEE;" /></a>';
+$_['text_success']					 = 'Success: You have modified SmobilPay account details!';
+$_['text_edit']                      = 'Edit SmobilPay Payment';
+$_['text_enkap']    				 = '<a target="_blank" href="https://enkap.cm/"><img src="view/image/payment/enkap.png" alt="SmobilPay Website Payment Pro" title="SmobilPay Website Payment Pro iFrame" style="border: 1px solid #EEEEEE;" /></a>';
 
 // Entry
 $_['entry_public']					 = 'Consumer Key';
@@ -31,6 +31,6 @@ $_['tab_order_status']       		 = 'Order Status';
 $_['help_test']						 = 'Use the live or testing (sandbox) gateway server to process transactions?';
 
 // Error
-$_['error_permission']				 = 'Warning: You do not have permission to modify payment E-nkap!';
+$_['error_permission']				 = 'Warning: You do not have permission to modify payment SmobilPay!';
 $_['error_public']					 = 'Consumer key required!';
 $_['error_private']					 = 'Secret key required!';

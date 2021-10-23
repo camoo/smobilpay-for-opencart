@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
-	<name>Add new request status button to order info page</name>
-	<code>Add new request status button to order info page</code>
-	<version>1</version>
-	<author>Izipresta</author>
-	<link>izipresta.com</link>
+	<name>SmobilPay for e-commerce</name>
+	<code>smobilpay-for-ecommerce</code>
+	<version>1.0.0</version>
+	<author>CamooSarl</author>
+	<link>www.camoo.cm</link>
 	<file path="admin/language/en-gb/sale/order.php">
 		<operation error="log">
 			<search><![CDATA[$_['entry_date_modified']        = 'Date Modified';]]></search>
 			<add position="after">
 				<![CDATA[
 					$_['entry_load_status']        = 'Refresh order status';
-					$_['text_enkap_transaction_id']        = 'E-nkap Transaction ID';
-					$_['text_enkap_merchant_reference']        = 'E-nkap Merchant Reference';
-					$_['text_enkap_order_status']        = 'E-nkap Payment Status';
+					$_['text_enkap_transaction_id']        = 'SmobilPay Transaction ID';
+					$_['text_enkap_merchant_reference']        = 'SmobilPay Merchant Reference';
+					$_['text_enkap_order_status']        = 'SmobilPay Payment Status';
 				]]>
 			</add>
 		</operation>
