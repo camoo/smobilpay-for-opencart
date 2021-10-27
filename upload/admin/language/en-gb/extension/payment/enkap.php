@@ -11,7 +11,7 @@ $_['text_enkap']    				 = '<a target="_blank" href="https://enkap.cm/"><img src
 
 // Entry
 $_['entry_public']					 = 'Consumer Key';
-$_['entry_private']					 = 'Secret Key';
+$_['entry_private']					 = 'Consumer Secret';
 $_['entry_test']					 = 'Sandbox Mode';
 $_['entry_geo_zone']				 = 'Geo Zone';
 $_['entry_status']					 = 'Status';
