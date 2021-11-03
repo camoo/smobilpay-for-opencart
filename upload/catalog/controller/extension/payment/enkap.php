@@ -28,8 +28,8 @@ class ControllerExtensionPaymentEnkap extends Controller
                     $item['itemId'] = $product['product_id'];
                     $item['particulars'] = $product['name'];
                     $item['unitCost'] = (float)ceil($product['price'] * $currencyRate);
-                    $item['quantity'] = (float)$product['quantity'];
-                    $item['subTotal'] = (float)ceil($product['price'] * $currencyRate);
+                    $item['quantity'] = (int)$product['quantity'];
+                    $item['subTotal'] = (float)ceil($product['price'] * $currencyRate * (int)$product['quantity']);
                     $items[] = $item;
                 }
             }
